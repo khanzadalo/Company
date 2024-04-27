@@ -2,12 +2,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .yasg import swagger_urlpatterns
+from core.swagger import swagger_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include('users.urls')),
-    path('api/v1/', include('main.urls')),
+    path('api/v1/', include('apps.users.urls')),
+    path('api/v1/', include('apps.main.urls')),
+
 ] + swagger_urlpatterns
 
 if settings.DEBUG:

@@ -1,16 +1,6 @@
-import uuid
 from django.db import models
-from django.contrib.auth.models import User
-
-
-class BaseModel(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created at")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Changed at")
-    is_deleted = models.BooleanField(default=False, verbose_name="Is deleted")
-
-    class Meta:
-        abstract = True
+from apps.common.models import BaseModel
+from apps.users.models import User
 
 
 class Department(BaseModel):
@@ -20,7 +10,7 @@ class Department(BaseModel):
         return self.name
 
 
-class Employee(BaseModel):
+class Position(models.Model):
     POSITION_CHOICES = (
         ('manager', 'Manager'),
         ('developer', 'Developer'),
@@ -32,6 +22,13 @@ class Employee(BaseModel):
         ('other', 'Other')
     )
 
+    title = models.CharField(max_length=255, choices=POSITION_CHOICES)
+
+    def __str__(self):
+        return self.title
+
+
+class Employee(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="employee")
     username = models.CharField(max_length=255, verbose_name="Username")
     surname = models.CharField(max_length=255, verbose_name="Surname")
@@ -39,7 +36,7 @@ class Employee(BaseModel):
     last_name = models.CharField(max_length=255, verbose_name="Last Name")
     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Department")
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True, verbose_name="Avatar")
-    position = models.CharField(max_length=255, choices=POSITION_CHOICES, verbose_name="Position")
+    position = models.ForeignKey(Position, on_delete=models.CASCADE, verbose_name="Position")
     salary = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Salary")
     is_admin = models.BooleanField(default=False, verbose_name="Is Admin")
     email = models.EmailField(max_length=255, verbose_name="Email")

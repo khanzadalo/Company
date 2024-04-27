@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from users.models import User, Profile
+from apps.users.models import User
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -28,16 +28,6 @@ class LoginSerializer(serializers.Serializer):
     class Meta:
         model = User
         fields = ("token",)
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username', required=False)
-    email = serializers.EmailField(source='user.email', required=False)
-
-    class Meta:
-        model = Profile
-        fields = ['user', 'avatar', 'username', 'email']
-        read_only_fields = ['user', 'email']
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})

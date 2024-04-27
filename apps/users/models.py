@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 
 from rest_framework import permissions
 
-from main.models import BaseModel
+from apps.common.models import BaseModel
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
@@ -21,20 +21,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
 
     def __str__(self):
         return self.username
-
-
-class Profile(BaseModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="User")
-    avatar = models.ImageField(null=True, blank=False, verbose_name="Avatar")
-
-    def __str__(self):
-        return self.user.username
-
-    class Meta:
-        db_table = "profile"
-        verbose_name = "Profile"
-        verbose_name_plural = "Profiles"
-        ordering = "-created_at",
 
 
 class PasswordResetToken(models.Model):

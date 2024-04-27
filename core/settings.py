@@ -1,36 +1,64 @@
 import os
-from decouple import config
 from pathlib import Path
+from decouple import config
 from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# SECRET_KEY
 SECRET_KEY = config('SECRET_KEY')
-
 DEBUG = True
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-ALLOWED_HOSTS = ['*']
+# # ALLOWED_HOSTS
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*')
+#
+# # DEBUG
+# DEBUG = config('DEBUG', default=False, cast=bool)
 
-INSTALLED_APPS = [
-    # THEME_APPS
-    'jazzmin',
+# Database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('POSTGRES_DB'),
+        'USER': config('POSTGRES_USER'),
+        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'HOST': config('POSTGRES_HOST'),
+        'PORT': config('POSTGRES_PORT', cast=int),
+        'ATOMIC_REQUESTS': True,
+    }
+}
 
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
 
-    # LIBRARY_APPS
+THEME_APPS = ['jazzmin']
+
+LIBRARY_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
     'drf_yasg',
+]
 
-    # LOCAL_APPS
-    'main',
-    'users'
+LOCAL_APPS = [
+    'apps.common.apps.CommonConfig',
+    'apps.users.apps.UsersConfig',
+    'apps.main.apps.MainConfig',
+]
+
+
+INSTALLED_APPS = [
+    *THEME_APPS,
+    *DJANGO_APPS,
+    *LIBRARY_APPS,
+    *LOCAL_APPS
 ]
 
 MIDDLEWARE = [
@@ -63,19 +91,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config('POSTGRES_DB'),
-        'USER': config('POSTGRES_USER'),
-        'PASSWORD': config('POSTGRES_PASSWORD'),
-        'HOST': config('POSTGRES_HOST'),
-        'PORT': config('POSTGRES_PORT', cast=int),
-        'ATOMIC_REQUESTS': True,
-    }
-}
-
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
@@ -83,6 +98,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
+AUTH_USER_MODEL = "users.User"
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
@@ -148,7 +164,7 @@ REST_FRAMEWORK = {
 
 }
 
-# ADMIN PAGE THEME
+# THEME settings
 JAZZMIN_SETTINGS = {
     "site_title": "Company",
     "site_header": "Company",

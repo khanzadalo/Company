@@ -2,14 +2,14 @@ from django.contrib.auth import authenticate
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, get_object_or_404
+from rest_framework.generics import CreateAPIView, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 
-from users.email import send_email_confirmation, send_email_reset_password, generate_random_code
-from users.models import Profile, User, PasswordResetToken, IsAdminUser
-from users.serializers import RegisterSerializer, LoginSerializer, ProfileSerializer, PasswordChangeSerializer, \
+from apps.users.email import send_email_reset_password, generate_random_code
+from apps.users.models import User, PasswordResetToken
+from apps.users.serializers import RegisterSerializer, LoginSerializer, PasswordChangeSerializer, \
     VerifySerializer, PasswordResetSearchUserSerializer, PasswordResetCodeSerializer, PasswordResetNewPasswordSerializer
 
 
@@ -22,12 +22,6 @@ class RegisterView(CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    def perform_create(self, serializer):
-        user = serializer.save()
-        profile = Profile.objects.create(user=user)
-        profile.save()
-        send_email_confirmation(user.email)
 
 
 class LoginView(CreateAPIView):
@@ -55,19 +49,6 @@ class LoginView(CreateAPIView):
 
     def list(self, request):
         return Response(status=status.HTTP_200_OK)
-
-
-class ProfileUserAPIView(RetrieveUpdateAPIView):
-    serializer_class = ProfileSerializer
-    permission_classes = [IsAdminUser]
-
-    def get_object(self):
-        return get_object_or_404(Profile, user=self.request.user.id)
-
-    def patch(self, request, *args, **kwargs):
-        if not request.user.is_admin:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        return super().patch(request, *args, **kwargs)
 
 
 class ChangePasswordView(CreateAPIView):

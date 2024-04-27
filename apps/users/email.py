@@ -1,10 +1,9 @@
-import os
 import random
 import string
 
 from django.core.mail import send_mail
 
-from users.models import User
+from apps.users.models import User
 
 code = random.randint(1000, 9999)
 reset_password = random.randint(1000, 9999)
