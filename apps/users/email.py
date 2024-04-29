@@ -1,6 +1,6 @@
 import random
 import string
-
+from decouple import config
 from django.core.mail import send_mail
 
 from apps.users.models import User
@@ -10,11 +10,11 @@ reset_password = random.randint(1000, 9999)
 
 
 def send_email_confirmation(email):
-    subject = "Email Confirmation"
+    subject = "Подтверждение электронной почты"
     message = (
-        f"Hello! Your email address was provided for logging into the Company site. "
-        f"Please enter this code on the login page: {code}. "
-        f"If this was not you or you did not register on the site, simply ignore this email."
+        f"Привет! Ваш адрес электронной почты был указан для входа на сайт Company. "
+        f"Пожалуйста, введите этот код на странице входа в систему: {code}. "
+        f"Если это были не вы или вы не регистрировались на сайте, просто проигнорируйте это письмо."
     )
     email_from = "nikksiri@yandex.ru"
     send_mail(subject, message, email_from, [email])
@@ -24,11 +24,11 @@ def send_email_confirmation(email):
 
 
 def send_email_reset_password(email, reset_password):
-    subject = "Password Reset"
+    subject = "Сброс пароля"
     message = (
-        f"Password reset code: {reset_password}. The code is valid for 5 minutes."
+        f"Код для сброса пароля: {reset_password}. Код действителен в течение 5 минут."
     )
-    email_from = "nikksiri@yandex.ru"
+    email_from = config('EMAIL_HOST_USER')
     send_mail(subject, message, email_from, [email])
 
 

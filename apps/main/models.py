@@ -1,16 +1,21 @@
 from django.db import models
+
 from apps.common.models import BaseModel
 from apps.users.models import User
 
 
-class Department(BaseModel):
+class Departament(BaseModel):
     name = models.CharField(max_length=255, verbose_name="Name")
 
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Департамент'
+        verbose_name_plural = 'Департаменты'
 
-class Position(models.Model):
+
+class PositionDepartament(models.Model):
     POSITION_CHOICES = (
         ('manager', 'Manager'),
         ('developer', 'Developer'),
@@ -23,33 +28,42 @@ class Position(models.Model):
     )
 
     title = models.CharField(max_length=255, choices=POSITION_CHOICES)
+    departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.title
+        return "депортамент %s позиция %s" % (self.departament, self.title)
+
+    class Meta:
+        verbose_name = 'Позиция в департаменте'
+        verbose_name_plural = 'Позиции в департаменте'
 
 
 class Employee(BaseModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="employee")
-    username = models.CharField(max_length=255, verbose_name="Username")
-    surname = models.CharField(max_length=255, verbose_name="Surname")
-    first_name = models.CharField(max_length=255, verbose_name="First Name")
-    last_name = models.CharField(max_length=255, verbose_name="Last Name")
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Department")
-    avatar = models.ImageField(upload_to="avatars/", null=True, blank=True, verbose_name="Avatar")
-    position = models.ForeignKey(Position, on_delete=models.CASCADE, verbose_name="Position")
-    salary = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Salary")
-    is_admin = models.BooleanField(default=False, verbose_name="Is Admin")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Сотрудник")
+    username = models.CharField(max_length=255, verbose_name="Имя пользователя")
+    surname = models.CharField(max_length=255, verbose_name="Фамилия")
+    first_name = models.CharField(max_length=255, verbose_name="Имя")
+    last_name = models.CharField(max_length=255, verbose_name="Отчество")
+    department = models.ForeignKey(Departament, on_delete=models.CASCADE, verbose_name="Департаменте")
+    avatar = models.ImageField(upload_to="avatars/", default='avatars/friend.jpg', verbose_name="Аватар")
+    position = models.ForeignKey(PositionDepartament, null=True, on_delete=models.SET_NULL, verbose_name="Позиция")
+    salary = models.FloatField(default=0, verbose_name="Зарплата")
+    is_admin = models.BooleanField(default=False, verbose_name="Админ")
     email = models.EmailField(max_length=255, verbose_name="Email")
-    date_of_birth = models.DateField(verbose_name="Date of Birth")
+    date_of_birth = models.DateField(verbose_name="Дата рождения")
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return "%s, %s" % (self.username, self.position)
+
+    class Meta:
+        verbose_name = 'Сотрудник'
+        verbose_name_plural = 'Сотрудники'
 
 
 class PersonalData(BaseModel):
-    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, verbose_name="Employee")
-    address = models.CharField(max_length=255, verbose_name="Address")
-    bank_book = models.CharField(max_length=255, verbose_name="Bank Book")
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, verbose_name="Сотрудник")
+    address = models.CharField(max_length=255, verbose_name="Адрес")
+    bank_book = models.CharField(max_length=255, verbose_name="Банковская книжка")
 
-    def __str__(self):
-        return self.employee.username
+
+

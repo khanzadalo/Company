@@ -4,7 +4,7 @@ from django.contrib.auth.models import BaseUserManager
 class UserManager(BaseUserManager):
     def _create_user(self, username, is_admin, is_staff, is_active, password=None):
         if not username:
-            raise ValueError("User must have an username")
+            raise ValueError("У пользователя должно быть имя пользователя")
         user = self.model(
             username=username,
             is_admin=is_admin,
@@ -24,7 +24,7 @@ class UserManager(BaseUserManager):
             password=password,
         )
 
-    def create_admin(self, username, password=None):
+    def create_superuser(self, username, password=None):
         return self._create_user(
             username=username,
             is_admin=True,

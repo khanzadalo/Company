@@ -7,7 +7,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECRET_KEY
 SECRET_KEY = config('SECRET_KEY')
+
 DEBUG = True
+
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # # ALLOWED_HOSTS
@@ -119,7 +121,7 @@ SIMPLE_JWT = {
     "JTI_CLAIM": "jti",
 }
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'Asia/Bishkek'
 
@@ -130,6 +132,7 @@ USE_TZ = True
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 # Media files
 MEDIA_URL = "/media/"

@@ -7,7 +7,7 @@ from core.swagger import swagger_urlpatterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('apps.users.urls')),
-    path('api/v1/', include('apps.main.urls')),
+    path('employee/', include('apps.main.urls')),
 
 ] + swagger_urlpatterns
 

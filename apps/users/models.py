@@ -4,20 +4,23 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from rest_framework import permissions
 
 from apps.common.models import BaseModel
+from apps.users.managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
-    username = models.CharField(max_length=150, blank=False, null=False, unique=True, verbose_name="Username")
+    username = models.CharField(max_length=150, blank=False, null=False, unique=True, verbose_name="Имя пользователя")
     email = models.EmailField(null=True, verbose_name="E-mail")
-    password = models.CharField(max_length=128, blank=True, null=True, verbose_name="Password")
+    password = models.CharField(max_length=128, blank=True, null=True, verbose_name="Пароль")
     otp = models.CharField(max_length=4, null=True, blank=True)
-    is_active = models.BooleanField(default=False, verbose_name="Active")
-    is_staff = models.BooleanField(default=False, verbose_name="Staff")
-    is_admin = models.BooleanField(default=False, verbose_name="Admin")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Date Created')
+    is_active = models.BooleanField(default=False, verbose_name="Активный")
+    is_staff = models.BooleanField(default=False, verbose_name="Персонал")
+    is_admin = models.BooleanField(default=False, verbose_name="Админ")
     groups = models.ManyToManyField(Group, related_name="custom_user_groups")
     user_permissions = models.ManyToManyField(Permission, related_name="custom_user_permissions")
+
     USERNAME_FIELD = "username"
+
+    objects = UserManager()
 
     def __str__(self):
         return self.username
